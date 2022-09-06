@@ -35,7 +35,7 @@ class Window(QObject):
 
         font_list = []
 
-        for file in os.listdir("Fonts/"):
+        for file in os.listdir("Fonts"):
             id = QFontDatabase.addApplicationFont(f"Fonts/{file}")
             if id < 0:
                 pass
