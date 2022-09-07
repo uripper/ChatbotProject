@@ -9,23 +9,21 @@ tokenizer = GPT2Tokenizer.from_pretrained('uripper/ReviewTrainingBot')
 model = GPT2LMHeadModel.from_pretrained('uripper/ReviewTrainingBot')
 
 
-def generating_review(text, max_length=300):
+def generating_review(text, max_length=300, top_k=5, temperature=.7, min_length=1, no_repeat_ngram_size=2):
     prompt = f"<|startoftext|> {text}"
-    new_max_length = max_length + len(prompt)
+
     generated = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0)
     outputs = model.generate(
         generated, 
-        max_length=new_max_length, 
+        max_length=max_length, 
         pad_token_id=tokenizer.pad_token_id, 
         bos_token_id=tokenizer.bos_token_id, 
         eos_token_id=tokenizer.eos_token_id,
-        min_length=len(prompt)+1,
-        do_sample=True, 
-        top_k=50, 
-        top_p=0.95, 
-        temperature=.6, 
-        no_repeat_ngram_size=3,
-        num_beams=1,
+        min_length=min_length,
+        do_sample=True,  
+        top_k=top_k, 
+        temperature=temperature,
+        no_repeat_ngram_size= no_repeat_ngram_size
         )
     output = tokenizer.decode(outputs[0])
     new_output = output.replace("<|endoftext|>","").replace("<|pad|>","").replace("<|startoftext|>", "")
@@ -57,7 +55,7 @@ Review: {review}
 
 #This will run a test immediately, which will load the model as the program begins 
 #this allows for a faster response time when the user inputs text
-generated, x, y, z = generating_review("Movie:", max_length=10)
+generated, x, y, z = generating_review("Movie:", max_length=100)
 print("Test response (should be shorter than usual): ")
 print(generated)
 print("Review bot is ready to go!")
