@@ -89,8 +89,8 @@ def review():
         score = score.split("Score:")[1]
         review = output.split("Review:")[1] 
 
-        review.replace("…", ".")
-        review.replace("...", ".")
+        review = review.replace("…", ".")
+        review = review.replace("...", ".")
 
         st.write("Movie:")
         st.write(out_movie)
