@@ -2,7 +2,7 @@ import streamlit as st
 from time import sleep
 import requests
 
-def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
+def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -12,12 +12,12 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
         
     output = query({
         "inputs": f"{text}",
-        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
 
     })
     return output
     
-def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
+def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
     headers = {"Authorization": "Bearer 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"}
 
@@ -26,12 +26,12 @@ def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
         return response.json()
     output = query({
         "inputs": f"{text}",
-        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
 
         })
     return output
     
-def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
+def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -41,7 +41,7 @@ def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
         
     output = query({
         "inputs": f"{text}",
-        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
     })
     return output
     
@@ -72,6 +72,7 @@ def review():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 100, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
 
     st.write("Please enter the name of the movie you would like to review.")
     in_movie = st.text_input("Movie")
@@ -79,7 +80,7 @@ def review():
     random_review = st.button("Random Review")
     if review_button: 
         in_movie = "Movie: " + in_movie + " Score:"
-        output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
         output = output[0]["generated_text"]
         out_movie =output.split("Score:")[0]
         out_movie = out_movie.replace("Movie: ", "")
@@ -97,7 +98,7 @@ def review():
         st.write(review)
     
     if random_review:
-        output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
         output = output[0]["generated_text"]
         out_movie =output.split("Score:")[0]
         out_movie = out_movie.replace("Movie: ", "")
@@ -116,13 +117,13 @@ def review():
 
 def persona():   
     st.title("Persona Chat")
-    annoying = st.selectbox("Normal or Less Annoying?", ["Normal", "Less Annoying"])
     st.write("Please enter your message below.")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 10, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
   
 
     user_chat = st.text_input("Chat with Persona!")
@@ -135,22 +136,11 @@ def persona():
         st.session_state.persona_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
         output = output[0]["generated_text"]
         output = output.split("Bot:")[1]
-        st.write(output)
-        # bot_response = "Bot: " + bot_response
-        # if annoying == "Less Annoying":
-        #     if "!!" in bot_response:
-        #         bot_response = bot_response.split("!!")[0]
-        # st.session_state.persona_chat_history.append(bot_response)
-        # st.write(bot_response)
-        
-        sleep(1)
-        st.write("_" * 50)
-        st.write("Chat History:")
-        for i in st.session_state.persona_chat_history:
-            st.write(i)   
+        output = "Persona: " + output
+
 
     
         
@@ -163,6 +153,7 @@ def gordon_chat():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 10, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
 
     user_chat = st.text_input("Chat with Gordon!")
     gordon_chat_button = st.button("Send")    
@@ -177,15 +168,9 @@ def gordon_chat():
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         output = output[0]["generated_text"]        
         output = output.split("Bot:")[1]
+        output = "Gordon: " + output
         st.write(output)
-        # st.session_state.gordon_chat_history.append(bot_response)
-        # st.write(bot_response)
-        
-        # sleep(1)
-        # st.write("_" * 50)
-        # st.write("Chat History")
-        # for i in st.session_state.gordon_chat_history:
-        #     st.write(i)   
+
 
 page_names_to_funcs = {
     "Main Page": main_page,
