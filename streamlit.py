@@ -2,7 +2,7 @@ import streamlit as st
 from time import sleep
 import requests
 
-def per_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
+def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -12,12 +12,12 @@ def per_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, 
         
     output = query({
         "inputs": f"{text}",
-        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
 
     })
     return output
     
-def gor_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
+def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
     headers = {"Authorization": "Bearer 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"}
 
@@ -26,12 +26,12 @@ def gor_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, 
         return response.json()
     output = query({
         "inputs": f"{text}",
-        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
 
         })
     return output
     
-def rev_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
+def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -41,7 +41,7 @@ def rev_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, 
         
     output = query({
         "inputs": f"{text}",
-        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
+        "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty},
     })
     return output
     
@@ -67,18 +67,21 @@ def main_page():
         
 def review():
     st.title("Review")
+    
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.01)
     top_k = st.slider("Top K", 1, 100, 5, 1)
-    max_length = st.slider("Max Length", 200, 1000, 500, 1)
-    min_length = st.slider("Min Length", 50, 200, 50, 1)
-    no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)   
+    max_length = st.slider("Max Length", 1, 250, 100, 1)
+    repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+
     st.write("Please enter the name of the movie you would like to review.")
     in_movie = st.text_input("Movie")
     in_movie = "Movie: " + in_movie + " Score:"
-    output = rev_generate(in_movie, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
+    output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
     output = output[0]["generated_text"]
     out_movie =output.split("Score:")[0]
+    out_movie = out_movie.replace("Movie: ", "")
     score = output.split("Review:")[0]
+    score = score.split("Score:")[1]
     review = output.split("Review:")[1] 
     
     
@@ -89,27 +92,18 @@ def review():
     st.write(score)
     st.write("Review:")
     st.write(review)
-    # if movie != "":
-    #     review, movie, score, review = reviewing.generating_review(movie,
-    #                                                                temperature=temperature,
-    #                                                                top_k=top_k,
-    #                                                                max_length=max_length,
-    #                                                                min_length=min_length,
-    #                                                                no_repeat_ngram_size=no_repeat_ngram_size)
-                                                                       
-    #     st.write(movie)
-    #     st.write(score)
-    #     st.write(review)
+
 
 def persona():   
     st.title("Persona Chat")
     annoying = st.selectbox("Normal or Less Annoying?", ["Normal", "Less Annoying"])
     st.write("Please enter your message below.")
+    
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
-    max_length = st.slider("Max Length", 10, 1000, 15, 1)
-    min_length = st.slider("Min Length", 1, 200, 1, 1)
-    no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)    
+    max_length = st.slider("Max Length", 1, 250, 10, 1)
+    repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+  
 
     user_chat = st.text_input("Chat with Persona!")
     stan_chat_button = st.button("Send")    
@@ -121,7 +115,7 @@ def persona():
         st.session_state.persona_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = per_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
+        output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         output = output[0]["generated_text"]
         output = output.split("Bot:")[1]
         st.write(output)
@@ -145,11 +139,11 @@ def gordon_chat():
     st.title("Chat with Gordon")
     st.write("Please enter your message below.")
     
-    temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.01)
+    temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
-    max_length = st.slider("Max Length", 10, 1000, 15, 1)
-    min_length = st.slider("Min Length", 1, 200, 1, 1)
-    no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)     
+    max_length = st.slider("Max Length", 1, 250, 10, 1)
+    repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
+
     user_chat = st.text_input("Chat with Gordon!")
     gordon_chat_button = st.button("Send")    
 
@@ -160,8 +154,7 @@ def gordon_chat():
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = gor_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
-        print(output)
+        output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         output = output[0]["generated_text"]        
         output = output.split("Bot:")[1]
         st.write(output)
