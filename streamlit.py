@@ -84,7 +84,7 @@ def review():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 100, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
-    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, not recommended for review due to repetition)", True)
 
     st.write("Please enter the name of the movie you would like to review. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     in_movie = st.text_input("Movie")
@@ -186,7 +186,7 @@ def gordon_chat():
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
         print(output)
         output = output[0]["generated_text"]        
         output = output.split("Bot:")[1]
