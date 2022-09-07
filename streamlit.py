@@ -86,9 +86,7 @@ def review():
         score = output.split("Review:")[0]
         score = score.split("Score:")[1]
         review = output.split("Review:")[1] 
-    
-    
-        st.write(output)
+
         st.write("Movie:")
         st.write(out_movie)
         st.write("Score:")
@@ -104,9 +102,7 @@ def review():
         score = output.split("Review:")[0]
         score = score.split("Score:")[1]
         review = output.split("Review:")[1] 
-    
-    
-        st.write(output)
+
         st.write("Movie:")
         st.write(out_movie)
         st.write("Score:")
