@@ -1,8 +1,45 @@
 import streamlit as st
-import reviewing
-import chatting
-import gordon
 from time import sleep
+import requests
+
+def per_generate(text):
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+    headers = {"Authorization": "Bearer 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"}
+
+    def query(payload):
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+        
+    output = query({
+        "inputs": f"{text}",
+    })
+    return output
+    
+def gor_generate(text):
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+    headers = {"Authorization": "Bearer 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"}
+
+    def query(payload):
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+    output = query({
+        "inputs": f"{text}",
+        })
+    return output
+    
+def rev_generate(text):
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+    headers = {"Authorization": "Bearer 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"}
+
+    def query(payload):
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+        
+    output = query({
+        "inputs": f"{text}",
+    })
+    return output
+    
 
 if "persona_chat_history" not in st.session_state:
     st.session_state.persona_chat_history = []
@@ -32,17 +69,19 @@ def review():
     no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)   
     st.write("Please enter the name of the movie you would like to review.")
     movie = st.text_input("Movie")
-    if movie != "":
-        review, movie, score, review = reviewing.generating_review(movie,
-                                                                   temperature=temperature,
-                                                                   top_k=top_k,
-                                                                   max_length=max_length,
-                                                                   min_length=min_length,
-                                                                   no_repeat_ngram_size=no_repeat_ngram_size)
+    output = rev_generate(movie)
+    st.write(output)
+    # if movie != "":
+    #     review, movie, score, review = reviewing.generating_review(movie,
+    #                                                                temperature=temperature,
+    #                                                                top_k=top_k,
+    #                                                                max_length=max_length,
+    #                                                                min_length=min_length,
+    #                                                                no_repeat_ngram_size=no_repeat_ngram_size)
                                                                        
-        st.write(movie)
-        st.write(score)
-        st.write(review)
+    #     st.write(movie)
+    #     st.write(score)
+    #     st.write(review)
 
 def persona():   
     st.title("Persona Chat")
@@ -64,18 +103,20 @@ def persona():
         st.session_state.persona_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        bot_response = chatting.generating_reply(user_chat, 
-                                                 temperature=temperature, 
-                                                 top_k=top_k, 
-                                                 max_length=max_length, 
-                                                 min_length=min_length,
-                                                 no_repeat_ngram_size=no_repeat_ngram_size,)
-        bot_response = "Bot: " + bot_response
-        if annoying == "Less Annoying":
-            if "!!" in bot_response:
-                bot_response = bot_response.split("!!")[0]
-        st.session_state.persona_chat_history.append(bot_response)
-        st.write(bot_response)
+        output = per_generate(user_chat)
+        st.write(output)
+        # bot_response = chatting.generating_reply(user_chat, 
+        #                                          temperature=temperature, 
+        #                                          top_k=top_k, 
+        #                                          max_length=max_length, 
+        #                                          min_length=min_length,
+        #                                          no_repeat_ngram_size=no_repeat_ngram_size,)
+        # bot_response = "Bot: " + bot_response
+        # if annoying == "Less Annoying":
+        #     if "!!" in bot_response:
+        #         bot_response = bot_response.split("!!")[0]
+        # st.session_state.persona_chat_history.append(bot_response)
+        # st.write(bot_response)
         
         sleep(1)
         st.write("_" * 50)
@@ -105,23 +146,25 @@ def gordon_chat():
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        bot_response = gordon.generating_reply(user_chat, 
-                                            temperature=temperature, 
-                                            top_k=top_k, 
-                                            max_length=max_length, 
-                                            min_length=min_length,
-                                            no_repeat_ngram_size=no_repeat_ngram_size,)
-        bot_response = "Bot: " + bot_response
-        if "!!" in bot_response:
-            bot_response = bot_response.split("!!")[0]
-        st.session_state.gordon_chat_history.append(bot_response)
-        st.write(bot_response)
+        output = gordon_generate(user_chat)
+        st.write(output)
+        # bot_response = gordon.generating_reply(user_chat, 
+        #                                     temperature=temperature, 
+        #                                     top_k=top_k, 
+        #                                     max_length=max_length, 
+        #                                     min_length=min_length,
+        #                                     no_repeat_ngram_size=no_repeat_ngram_size,)
+        # bot_response = "Bot: " + bot_response
+        # if "!!" in bot_response:
+        #     bot_response = bot_response.split("!!")[0]
+        # st.session_state.gordon_chat_history.append(bot_response)
+        # st.write(bot_response)
         
-        sleep(1)
-        st.write("_" * 50)
-        st.write("Chat History")
-        for i in st.session_state.gordon_chat_history:
-            st.write(i)   
+        # sleep(1)
+        # st.write("_" * 50)
+        # st.write("Chat History")
+        # for i in st.session_state.gordon_chat_history:
+        #     st.write(i)   
 
 page_names_to_funcs = {
     "Main Page": main_page,
@@ -132,3 +175,4 @@ page_names_to_funcs = {
 
 selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
 page_names_to_funcs[selected_page]()
+
