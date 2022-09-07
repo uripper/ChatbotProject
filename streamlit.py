@@ -89,6 +89,7 @@ def main_page():
     st.write("Persona chat has many of the same social biases as distilgpt2, which can be found here: https://huggingface.co/distilgpt2. In addition to these biases, it may have additional biases due to its training dataset, although they have not been discovered yet during my testing. As a special precaution, its responses are also passed through a bad word filter, which will prevent output if it contains any of the words in the list.")
 
 def review():
+    BAD_WORD = False
     st.title("Review")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.01)
@@ -107,11 +108,16 @@ def review():
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
         for i in check_output:
-            if i.lower() in bad_words:
-                BAD_WORD =True
+            for j in bad_words:
+                if i.lower() is j:
+                    BAD_WORD =True
+                    
+                
         print(output)
         output = output[0]["generated_text"]
-        if BAD_WORD:
+
+        if BAD_WORD == True:
+
             st.write("The bot generated a slur, please try again.")
             BAD_WORD = False
         else:
@@ -137,12 +143,13 @@ def review():
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
         for i in check_output:
-            if i.lower() in bad_words:
-                BAD_WORD =True
-        print(output)
+            for j in bad_words:
+                if i.lower() is j:
+                    BAD_WORD =True
         print(output)
         output = output[0]["generated_text"]
-        if BAD_WORD:
+        if BAD_WORD == True:
+            st.write(i)
             st.write("The bot generated a slur, please try again.")
             BAD_WORD = False
         else:
@@ -165,13 +172,14 @@ def review():
         
 
 
-def persona():   
+def persona():
+    BAD_WORD = False   
     st.title("Persona Chat")
     st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
-    max_length = st.slider("Max Length", 1, 250, 10, 1)
+    max_length = st.slider("Max Length", 1, 250, 25, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
     do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
   
@@ -190,11 +198,12 @@ def persona():
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
         for i in check_output:
-            if i.lower() in bad_words:
-                BAD_WORD =True
+            for j in bad_words:
+                if i.lower() is j:
+                    BAD_WORD =True
         print(output)
 
-        if BAD_WORD:
+        if BAD_WORD == True:
             st.write("The bot generated a slur, please try again.")
             BAD_WORD = False
         else:
@@ -207,12 +216,13 @@ def persona():
     
         
 def gordon_chat():
+    BAD_WORD = False
     st.title("Chat with Gordon")
     st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
-    max_length = st.slider("Max Length", 1, 250, 10, 1)
+    max_length = st.slider("Max Length", 1, 250, 25, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
     do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
 
@@ -230,12 +240,13 @@ def gordon_chat():
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
         for i in check_output:
-            if i.lower() in bad_words:
-                BAD_WORD =True
+            for j in bad_words:
+                if i.lower() is j:
+                    BAD_WORD =True
         print(output)
 
 
-        if BAD_WORD:
+        if BAD_WORD == True:
             st.write("The bot generated a slur, please try again.")
             BAD_WORD = False
         else:
