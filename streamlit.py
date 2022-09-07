@@ -104,7 +104,9 @@ def review():
     if review_button: 
         in_movie = "Movie: " + in_movie + " Score:"
         output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
-        for i in output:
+        check_output = output[0]["generated_text"]
+        check_output = check_output.split(" ")
+        for i in check_output:
             if i.lower() in bad_words:
                 BAD_WORD =True
         print(output)
@@ -132,9 +134,12 @@ def review():
     
     if random_review:
         output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)     
-        for i in output:
+        check_output = output[0]["generated_text"]
+        check_output = check_output.split(" ")
+        for i in check_output:
             if i.lower() in bad_words:
                 BAD_WORD =True
+        print(output)
         print(output)
         output = output[0]["generated_text"]
         if BAD_WORD:
@@ -182,7 +187,9 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
-        for i in output:
+        check_output = output[0]["generated_text"]
+        check_output = check_output.split(" ")
+        for i in check_output:
             if i.lower() in bad_words:
                 BAD_WORD =True
         print(output)
@@ -220,10 +227,13 @@ def gordon_chat():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
-        for i in output:
+        check_output = output[0]["generated_text"]
+        check_output = check_output.split(" ")
+        for i in check_output:
             if i.lower() in bad_words:
                 BAD_WORD =True
         print(output)
+
 
         if BAD_WORD:
             st.write("The bot generated a slur, please try again.")
