@@ -2,9 +2,6 @@ import streamlit as st
 import reviewing
 import chatting
 import gordon
-from transformers import AutoTokenizer, AutoModelForCausalLM, GPT2LMHeadModel, GPT2Tokenizer
-import torch
-import torch.nn.functional as F
 from time import sleep
 
 if "persona_chat_history" not in st.session_state:
