@@ -81,6 +81,7 @@ def review():
     if review_button: 
         in_movie = "Movie: " + in_movie + " Score:"
         output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        print(output)
         output = output[0]["generated_text"]
         out_movie =output.split("Score:")[0]
         out_movie = out_movie.replace("Movie: ", "")
@@ -99,6 +100,7 @@ def review():
     
     if random_review:
         output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        print(output)
         output = output[0]["generated_text"]
         out_movie =output.split("Score:")[0]
         out_movie = out_movie.replace("Movie: ", "")
@@ -137,6 +139,7 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        print(output)
         output = output[0]["generated_text"]
         output = output.split("Bot:")[1]
         output = "Persona: " + output
@@ -166,6 +169,7 @@ def gordon_chat():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        print(output)
         output = output[0]["generated_text"]        
         output = output.split("Bot:")[1]
         output = "Gordon: " + output
