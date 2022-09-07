@@ -2,9 +2,12 @@ import streamlit as st
 from time import sleep
 import requests
 
+BAD_WORD = False
+bad_words = st.secrets["bad_words"]
+
 def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
-    headers = {"Authorization": f"Bearer {my_api}"}
+    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
     
     if do_sample:
         use_cache = False
@@ -23,7 +26,7 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
-    headers = {"Authorization": f"Bearer {my_api}"}
+    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
     
     if do_sample:
         use_cache = False
@@ -41,7 +44,7 @@ def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
-    headers = {"Authorization": f"Bearer {my_api}"}
+    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
     
     if do_sample:
         use_cache = False
@@ -72,11 +75,18 @@ def main_page():
     
 
 
-    st.title("Welcome!")
-    st.write("This chatbot has a few interactive features, which can be accessed on the drop down menu on the left. \n\nThe first of these is the Review feature, the main feature of this application. You are able to enter the name of a movie and generate a review for it. This was created by finetuning a GPT-2 model on a dataset of movie reviews. The dataset was created via scraping around 120,000 letterboxd reviews. Currently, its main restrictions are that it hasn't found links between the movie title and the review itself, and struggles to determine positive and negative sentiment based on the score that is given. This will hopefully be improved with more reviews. However, it is excellent at generating formats of reviews, and will consistently give plausible reviews.")
-    st.write("The next is the Gordon Chat feature. This is the main recommendation for chatting. This is a finetuned model of DialoGPT from Microsoft, which was trained on the movie lines dataset from Cornell. The corpus can be found at https://convokit.cornell.edu/documentation/movie.html.")
-    st.write("The final feature is the Persona Chat feature. This is a finetuned model of distilgpt2 from Hugging Face, which was trained on the truecased Persona Chat dataset, found here https://huggingface.co/datasets/bavard/personachat_truecased. It is currently less capable of replying as consistently as Gordon, and will often reply with numerous exclamation points, after which it will proceed to change the subject. In order to make a less annoying and more coherent bot, you can select the feature 'Less Annoying' or if you want to see the full output, 'Normal'.")
-        
+    st.title("Welcome to this multi function chatbot!")
+    st.write("This chatbot has a few interactive features, which can be accessed on the drop down menu on the left. \n\nThe first of these is the Review feature, the main feature of this application. You are able to enter the name of a movie and generate a review for it. This was created by finetuning a GPT-2 model on a dataset of movie reviews. The dataset was created via scraping around 120,000 letterboxd reviews.")
+    st.write("The next is the Gordon Chat feature. This is the main recommendation for chatting. This is a finetuned model of DialoGPT from Microsoft, which was trained on the movie lines dataset from Cornell. The corpus can be found at https://convokit.cornell.edu/documentation/movie.html. It is recommended to use greedy search for this model in order to create the most likely responses to text. Its responses are fairly normal, with some abilities to act a specific role in response to a remark. For limitations, read the limitations section below.")
+    st.write("The final feature is the Persona Chat feature. This is a finetuned model of distilgpt2 from Hugging Face, which was trained on the truecased Persona Chat dataset, found here https://huggingface.co/datasets/bavard/personachat_truecased. It is recommended to use greedy search for this model as well.")
+    st.title("Limitations and biases")
+    st.write("The main limitations of the review feature are that it is unable to find links between the movie title and the review itself, and struggles to determine positive and negative sentiment based on the score that is given. It however gives consistently plausible reviews, if not very plausible. It is unable to determine fact, and cannot give truthful reviews or reliably determine actors/directors for any given movie. Its main, and only, use case is for entertainment.")
+    st.write("The review bot also has social biases. Due to its underlying model, it has many of the same biases as GPT-2. These biases can be found here: https://huggingface.co/gpt2. In addition to these biases, it also struggles with some of the unique examples of this training dataset. For a concrete example of this, it is fairly common for a review of a movie with gay or lesbian characters to be described as being 'very gay' on letterboxd.com. This is almost always used as a positive thing, but the bot itself is incapable of determining that this is a positive sentiment, and will describe random films this way in a manner that seems more like a slur. This language can likely be extended to other ways that have not been discovered yet, and the model should be handled with care.") 
+    st.write("Gordon chat's main limitations are that it has difficulty understanding context and reasoning for how it should choose responses. The same can be seen in greedy searches in the model it is trained after, DialoGPT. This is a limitation of chatbots, as a whole, and is not unique to this model. Due to its usage of movie lines as a dataset, prioritization of dialog that may be unnatural or overly dramatic may be expected in some cases, though it does not seem to be very common in practice.")    
+    st.write("Gordon chat also has social biases. Due to its underlying model, it has many of the same biases as DialoGPT. These biases can be found here: https://www.microsoft.com/en-us/research/project/large-scale-pretraining-for-response-generation/. In addition to these biases, it may have additional biases due to its training dataset. As films often use slurs in a variety of ways for a variety of purposes, these slurs can make their way into the results. In order to solve this, there will be a list of 'bad words' that will prevent output. ")
+    st.write("Persona chat's main limitations are much of the same as Gordon chat. The responses have been subjectively rated as weaker than those of Gordon chat, but this may be due to personal preference, and your experience may vary.")
+    st.write("Persona chat has many of the same social biases as distilgpt2, which can be found here: https://huggingface.co/distilgpt2. In addition to these biases, it may have additional biases due to its training dataset, although they have not been discovered yet during my testing. As a special precaution, its responses are also passed through a bad word filter, which will prevent output if it contains any of the words in the list.")
+
 def review():
     st.title("Review")
     
@@ -93,43 +103,59 @@ def review():
     if review_button: 
         in_movie = "Movie: " + in_movie + " Score:"
         output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        for i in output:
+            if i in bad_words:
+                BAD_WORD =True
         print(output)
         output = output[0]["generated_text"]
-        out_movie =output.split("Score:")[0]
-        out_movie = out_movie.replace("Movie: ", "")
-        score = output.split("Review:")[0]
-        score = score.split("Score:")[1]
-        review = output.split("Review:")[1] 
+        if BAD_WORD:
+            st.write("The bot generated a slur, please try again.")
+            BAD_WORD = False
+        else:
+            out_movie =output.split("Score:")[0]
+            out_movie = out_movie.replace("Movie: ", "")
+            score = output.split("Review:")[0]
+            score = score.split("Score:")[1]
+            review = output.split("Review:")[1] 
+            
+            review = review.replace("…", ".")
+            review = review.replace("...", ".")
+            
 
-        review = review.replace("…", ".")
-        review = review.replace("...", ".")
-
-        st.write("Movie:")
-        st.write(out_movie)
-        st.write("Score:")
-        st.write(score)
-        st.write("Review:")
-        st.write(review)
+            st.write("Movie:")
+            st.write(out_movie)
+            st.write("Score:")
+            st.write(score)
+            st.write("Review:")
+            st.write(review)
     
     if random_review:
-        output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)     
+        for i in output:
+            if i in bad_words:
+                BAD_WORD =True
         print(output)
         output = output[0]["generated_text"]
-        out_movie =output.split("Score:")[0]
-        out_movie = out_movie.replace("Movie: ", "")
-        score = output.split("Review:")[0]
-        score = score.split("Score:")[1]
-        review = output.split("Review:")[1] 
-        
-        review = review.replace("…", ".")
-        review = review.replace("...", ".")
+        if BAD_WORD:
+            st.write("The bot generated a slur, please try again.")
+            BAD_WORD = False
+        else:
+            out_movie =output.split("Score:")[0]
+            out_movie = out_movie.replace("Movie: ", "")
+            score = output.split("Review:")[0]
+            score = score.split("Score:")[1]
+            review = output.split("Review:")[1] 
+            
+            review = review.replace("…", ".")
+            review = review.replace("...", ".")
+            
 
-        st.write("Movie:")
-        st.write(out_movie)
-        st.write("Score:")
-        st.write(score)
-        st.write("Review:")
-        st.write(review)
+            st.write("Movie:")
+            st.write(out_movie)
+            st.write("Score:")
+            st.write(score)
+            st.write("Review:")
+            st.write(review)
         
 
 
@@ -155,12 +181,19 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
-        
+        for i in output:
+            if i in bad_words:
+                BAD_WORD =True
         print(output)
-        output = output[0]["generated_text"]
-        output = output.split("Bot:")[1]
-        output = "Persona: " + output
-        st.write(output)
+
+        if BAD_WORD:
+            st.write("The bot generated a slur, please try again.")
+            BAD_WORD = False
+        else:
+            output = output[0]["generated_text"]
+            output = output.split("Bot:")[1]
+            output = "Persona: " + output
+            st.write(output)
 
 
     
@@ -186,11 +219,19 @@ def gordon_chat():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+                for i in output:
+            if i in bad_words:
+                BAD_WORD =True
         print(output)
-        output = output[0]["generated_text"]        
-        output = output.split("Bot:")[1]
-        output = "Gordon: " + output
-        st.write(output)
+
+        if BAD_WORD:
+            st.write("The bot generated a slur, please try again.")
+            BAD_WORD = False
+        else:
+            output = output[0]["generated_text"]        
+            output = output.split("Bot:")[1]
+            output = "Gordon: " + output
+            st.write(output)
 
 
 page_names_to_funcs = {
