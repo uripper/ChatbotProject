@@ -3,11 +3,12 @@ from time import sleep
 import requests
 
 BAD_WORD = False
+my_api = st.secrets["my_api"]
 bad_words = st.secrets["bad_words"]
 
 def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
-    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
@@ -26,7 +27,7 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
-    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
@@ -44,7 +45,7 @@ def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
-    headers = {"Authorization": f"Bearer {st.secrets["my_api"]}"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
@@ -219,7 +220,7 @@ def gordon_chat():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
-                for i in output:
+        for i in output:
             if i in bad_words:
                 BAD_WORD =True
         print(output)
