@@ -75,23 +75,45 @@ def review():
 
     st.write("Please enter the name of the movie you would like to review.")
     in_movie = st.text_input("Movie")
-    in_movie = "Movie: " + in_movie + " Score:"
-    output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
-    output = output[0]["generated_text"]
-    out_movie =output.split("Score:")[0]
-    out_movie = out_movie.replace("Movie: ", "")
-    score = output.split("Review:")[0]
-    score = score.split("Score:")[1]
-    review = output.split("Review:")[1] 
+    review_button = st.button("Generate Review")
+    random_review = st.button("Random Review")
+    if review_button: 
+        in_movie = "Movie: " + in_movie + " Score:"
+        output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = output[0]["generated_text"]
+        out_movie =output.split("Score:")[0]
+        out_movie = out_movie.replace("Movie: ", "")
+        score = output.split("Review:")[0]
+        score = score.split("Score:")[1]
+        review = output.split("Review:")[1] 
     
     
-    st.write(output)
-    st.write("Movie:")
-    st.write(out_movie)
-    st.write("Score:")
-    st.write(score)
-    st.write("Review:")
-    st.write(review)
+        st.write(output)
+        st.write("Movie:")
+        st.write(out_movie)
+        st.write("Score:")
+        st.write(score)
+        st.write("Review:")
+        st.write(review)
+    
+    if random_review:
+        output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        output = output[0]["generated_text"]
+        out_movie =output.split("Score:")[0]
+        out_movie = out_movie.replace("Movie: ", "")
+        score = output.split("Review:")[0]
+        score = score.split("Score:")[1]
+        review = output.split("Review:")[1] 
+    
+    
+        st.write(output)
+        st.write("Movie:")
+        st.write(out_movie)
+        st.write("Score:")
+        st.write(score)
+        st.write("Review:")
+        st.write(review)
+        
 
 
 def persona():   
