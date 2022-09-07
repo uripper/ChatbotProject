@@ -90,6 +90,7 @@ def review():
         review = output.split("Review:")[1] 
 
         review.replace("…", ".")
+        review.replace("...", ".")
 
         st.write("Movie:")
         st.write(out_movie)
