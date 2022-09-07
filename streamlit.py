@@ -2,7 +2,7 @@ import streamlit as st
 from time import sleep
 import requests
 
-def per_generate(text):
+def per_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -12,11 +12,13 @@ def per_generate(text):
         
     output = query({
         "inputs": f"{text}",
+        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
+
     })
     return output
     
-def gor_generate(text):
-    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+def gor_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
+    API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
     headers = {"Authorization": "Bearer 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"}
 
     def query(payload):
@@ -24,10 +26,12 @@ def gor_generate(text):
         return response.json()
     output = query({
         "inputs": f"{text}",
+        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
+
         })
     return output
     
-def rev_generate(text):
+def rev_generate(text, min_length=50, max_length=500, temperature=0.5, top_k=5, no_repeat_ngram_size=2):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
@@ -37,6 +41,7 @@ def rev_generate(text):
         
     output = query({
         "inputs": f"{text}",
+        "parameters": {min_length: min_length, max_length: max_length, temperature: temperature, top_k: top_k, no_repeat_ngram_size: no_repeat_ngram_size},
     })
     return output
     
@@ -69,8 +74,8 @@ def review():
     no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)   
     st.write("Please enter the name of the movie you would like to review.")
     in_movie = st.text_input("Movie")
-    in_movie = "Movie: " + in_movie + "Score:"
-    output = rev_generate(in_movie)
+    in_movie = "Movie: " + in_movie + " Score:"
+    output = rev_generate(in_movie, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
     output = output[0]["generated_text"]
     out_movie =output.split("Movie:")[0]
     score = output.split("Score:")[1]
@@ -78,9 +83,9 @@ def review():
     
     
     st.write(output)
-    st.write("Movie: " + out_movie)
-    st.write("Score: " + score)
-    st.write("Review: " + review)
+    st.write("Movie:\n    " + out_movie)
+    st.write("Score:\n    " + score)
+    st.write("Review:\n    " + review)
     
     # if movie != "":
     #     review, movie, score, review = reviewing.generating_review(movie,
@@ -114,15 +119,10 @@ def persona():
         st.session_state.persona_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = per_generate(user_chat)
-        output = output[0]["generated_text"]
+        output = per_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
+        output = output[0]
+        output = output.split("Bot:")[1]
         st.write(output)
-        # bot_response = chatting.generating_reply(user_chat, 
-        #                                          temperature=temperature, 
-        #                                          top_k=top_k, 
-        #                                          max_length=max_length, 
-        #                                          min_length=min_length,
-        #                                          no_repeat_ngram_size=no_repeat_ngram_size,)
         # bot_response = "Bot: " + bot_response
         # if annoying == "Less Annoying":
         #     if "!!" in bot_response:
@@ -158,18 +158,11 @@ def gordon_chat():
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = gor_generate(user_chat)
-        output = output[0]["generated_text"]
+        output = gor_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
+        print(output)
+        output = output[0]
+        output = output.split("Bot:")[1]
         st.write(output)
-        # bot_response = gordon.generating_reply(user_chat, 
-        #                                     temperature=temperature, 
-        #                                     top_k=top_k, 
-        #                                     max_length=max_length, 
-        #                                     min_length=min_length,
-        #                                     no_repeat_ngram_size=no_repeat_ngram_size,)
-        # bot_response = "Bot: " + bot_response
-        # if "!!" in bot_response:
-        #     bot_response = bot_response.split("!!")[0]
         # st.session_state.gordon_chat_history.append(bot_response)
         # st.write(bot_response)
         
