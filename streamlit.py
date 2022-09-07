@@ -18,7 +18,7 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
         "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
         "options": {"wait_for_model": True, "use_cache": use_cache},
 
-    })
+        })
     return output
     
 def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
@@ -84,7 +84,7 @@ def review():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 100, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
-    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
 
     st.write("Please enter the name of the movie you would like to review. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     in_movie = st.text_input("Movie")
@@ -141,7 +141,7 @@ def persona():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 10, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
-    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
   
 
     user_chat = st.text_input("Chat with Persona!")
@@ -155,10 +155,12 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty, do_sample=do_sample)
+        
         print(output)
         output = output[0]["generated_text"]
         output = output.split("Bot:")[1]
         output = "Persona: " + output
+        st.write(output)
 
 
     
@@ -172,7 +174,7 @@ def gordon_chat():
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 10, 1)
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
-    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
+    do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
 
     user_chat = st.text_input("Chat with Gordon!")
     gordon_chat_button = st.button("Send")    
