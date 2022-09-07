@@ -86,7 +86,7 @@ def review():
     repetition_penalty = st.slider("Repetition Penalty (Affects future generations)", 0.0, 100.0, 1.0, 0.1)
     do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding)")
 
-    st.write("Please enter the name of the movie you would like to review.")
+    st.write("Please enter the name of the movie you would like to review. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     in_movie = st.text_input("Movie")
     review_button = st.button("Generate Review")
     random_review = st.button("Random Review")
@@ -135,7 +135,7 @@ def review():
 
 def persona():   
     st.title("Persona Chat")
-    st.write("Please enter your message below.")
+    st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
@@ -166,7 +166,7 @@ def persona():
 def gordon_chat():
     st.sidebar.title("Gordon Chat")
     st.title("Chat with Gordon")
-    st.write("Please enter your message below.")
+    st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     
     temperature = st.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
