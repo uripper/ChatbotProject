@@ -77,16 +77,18 @@ def review():
     in_movie = "Movie: " + in_movie + " Score:"
     output = rev_generate(in_movie, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
     output = output[0]["generated_text"]
-    out_movie =output.split("Movie:")[0]
-    score = output.split("Score:")[1]
+    out_movie =output.split("Score:")[0]
+    score = output.split("Review:")[0]
     review = output.split("Review:")[1] 
     
     
     st.write(output)
-    st.write("Movie:\n    " + out_movie)
-    st.write("Score:\n    " + score)
-    st.write("Review:\n    " + review)
-    
+    st.write("Movie:")
+    st.write(out_movie)
+    st.write("Score:")
+    st.write(score)
+    st.write("Review:")
+    st.write(review)
     # if movie != "":
     #     review, movie, score, review = reviewing.generating_review(movie,
     #                                                                temperature=temperature,
@@ -120,7 +122,7 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
-        output = output[0]
+        output = output[0]["generated_text"]
         output = output.split("Bot:")[1]
         st.write(output)
         # bot_response = "Bot: " + bot_response
@@ -160,7 +162,7 @@ def gordon_chat():
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat, min_length=min_length, max_length=max_length, temperature=temperature, top_k=top_k, no_repeat_ngram_size=no_repeat_ngram_size)
         print(output)
-        output = output[0]
+        output = output[0]["generated_text"]        
         output = output.split("Bot:")[1]
         st.write(output)
         # st.session_state.gordon_chat_history.append(bot_response)
