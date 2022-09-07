@@ -166,7 +166,6 @@ def persona():
     
         
 def gordon_chat():
-    st.sidebar.title("Gordon Chat")
     st.title("Chat with Gordon")
     st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
     
