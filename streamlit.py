@@ -4,7 +4,7 @@ import requests
 
 def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
-    headers = {"Authorization": "Bearer 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"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
@@ -23,7 +23,7 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
-    headers = {"Authorization": "Bearer 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"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
@@ -41,7 +41,7 @@ def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     
 def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
-    headers = {"Authorization": "Bearer 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"}
+    headers = {"Authorization": f"Bearer {my_api}"}
     
     if do_sample:
         use_cache = False
