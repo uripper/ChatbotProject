@@ -3,7 +3,7 @@ from time import sleep
 import requests
 
 def per_generate(text):
-    API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
     def query(payload):
@@ -28,7 +28,7 @@ def gor_generate(text):
     return output
     
 def rev_generate(text):
-    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
     def query(payload):
@@ -68,9 +68,20 @@ def review():
     min_length = st.slider("Min Length", 50, 200, 50, 1)
     no_repeat_ngram_size = st.slider("No Repeat Ngram Size", 0, 10, 2, 1)   
     st.write("Please enter the name of the movie you would like to review.")
-    movie = st.text_input("Movie")
-    output = rev_generate(movie)
+    in_movie = st.text_input("Movie")
+    in_movie = "Movie: " + in_movie + "Score:"
+    output = rev_generate(in_movie)
+    output = output[0]["generated_text"]
+    out_movie =output.split("Movie:")[0]
+    score = output.split("Score:")[1]
+    review = output.split("Review:")[1] 
+    
+    
     st.write(output)
+    st.write("Movie: " + out_movie)
+    st.write("Score: " + score)
+    st.write("Review: " + review)
+    
     # if movie != "":
     #     review, movie, score, review = reviewing.generating_review(movie,
     #                                                                temperature=temperature,
@@ -104,6 +115,7 @@ def persona():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = per_generate(user_chat)
+        output = output[0]["generated_text"]
         st.write(output)
         # bot_response = chatting.generating_reply(user_chat, 
         #                                          temperature=temperature, 
@@ -147,6 +159,7 @@ def gordon_chat():
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
         output = gor_generate(user_chat)
+        output = output[0]["generated_text"]
         st.write(output)
         # bot_response = gordon.generating_reply(user_chat, 
         #                                     temperature=temperature, 
