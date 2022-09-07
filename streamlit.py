@@ -2,10 +2,13 @@ import streamlit as st
 from time import sleep
 import requests
 
-def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
+def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
     headers = {"Authorization": "Bearer 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"}
-
+    
+    if do_sample:
+        use_cache = False
+        
     def query(payload):
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
@@ -13,13 +16,17 @@ def per_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     output = query({
         "inputs": f"{text}",
         "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
+        "options": {"wait_for_model": True, "use_cache": use_cache},
 
     })
     return output
     
-def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
+def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/Gordon"
     headers = {"Authorization": "Bearer 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"}
+    
+    if do_sample:
+        use_cache = False
 
     def query(payload):
         response = requests.post(API_URL, headers=headers, json=payload)
@@ -27,14 +34,18 @@ def gor_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     output = query({
         "inputs": f"{text}",
         "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
+        "options": {"wait_for_model": True, "use_cache": use_cache},
 
         })
     return output
     
-def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False):
+def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_penalty=1.0, do_sample=False, use_cache=True):
     API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
-
+    
+    if do_sample:
+        use_cache = False
+        
     def query(payload):
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
@@ -42,6 +53,7 @@ def rev_generate(text, max_length=500, temperature=0.5, top_k=5, repetition_pena
     output = query({
         "inputs": f"{text}",
         "parameters": {"max_new_tokens": max_length, "temperature": temperature, "top_k": top_k, "repitition_penalty": repetition_penalty, "do_sample": do_sample},
+        "options": {"wait_for_model": True, "use_cache": use_cache},
     })
     return output
     
