@@ -3,7 +3,7 @@ from time import sleep
 import requests
 
 def per_generate(text):
-    API_URL = "https://api-inference.huggingface.co/models/uripper/ChatbotTrainingBot"
+    API_URL = "https://api-inference.huggingface.co/models/uripper/ReviewTrainingBot"
     headers = {"Authorization": "Bearer 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"}
 
     def query(payload):
@@ -146,7 +146,7 @@ def gordon_chat():
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
         user_chat = user_chat + " Bot:"
-        output = gordon_generate(user_chat)
+        output = gor_generate(user_chat)
         st.write(output)
         # bot_response = gordon.generating_reply(user_chat, 
         #                                     temperature=temperature, 
