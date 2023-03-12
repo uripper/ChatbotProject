@@ -90,7 +90,7 @@ def main_page():
 def review():
     BAD_WORD = False
     st.title("Review")
-    
+
     temperature = st.slider("Temperature", 0.1, 1.0, 0.8, 0.01)
     top_k = st.slider("Top K", 1, 100, 15, 1)
     max_length = st.slider("Max Length", 1, 250, 100, 1)
@@ -102,17 +102,17 @@ def review():
     random_review = st.button("Random Review")
     st.write("Please only press Generate Review or Random Review once, it will take a short amount of time to load during the first generation.")
     if review_button: 
-        in_movie = "Movie: " + in_movie + " Score:"
+        in_movie = f"Movie: {in_movie} Score:"
         output = rev_generate(in_movie, max_length=max_length, temperature=temperature, top_k=top_k, do_sample=do_sample)
-                
+
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
         for i in check_output:
             for j in bad_words:
                 if i.lower() is j:
                     BAD_WORD =True
-                    
-                
+
+
         print(output)
         output = output[0]["generated_text"]
 
@@ -126,10 +126,10 @@ def review():
             score = output.split("Review:")[0]
             score = score.split("Score:")[1]
             review = output.split("Review:")[1] 
-            
+
             review = review.replace("…", ".")
             review = review.replace("...", ".")
-            
+
 
             st.write("Movie:")
             st.write(out_movie)
@@ -137,7 +137,7 @@ def review():
             st.write(score)
             st.write("Review:")
             st.write(review)
-    
+
     if random_review:
         output = rev_generate("Movie:", max_length=max_length, temperature=temperature, top_k=top_k, do_sample=do_sample)     
         check_output = output[0]["generated_text"]
@@ -158,10 +158,10 @@ def review():
             score = output.split("Review:")[0]
             score = score.split("Score:")[1]
             review = output.split("Review:")[1] 
-            
+
             review = review.replace("…", ".")
             review = review.replace("...", ".")
-            
+
 
             st.write("Movie:")
             st.write(out_movie)
@@ -173,28 +173,28 @@ def review():
 
 
 def persona():
-    BAD_WORD = False   
+    BAD_WORD = False
     st.title("Persona Chat")
     st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
-    
+
     temperature = st.slider("Temperature", 0.1, 1.0, 0.3, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 25, 1)
     do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
-  
+
 
     user_chat = st.text_input("Chat with Persona!")
     stan_chat_button = st.button("Send")
     st.write("Please only press Send once, it will take a short amount of time to load during the first generation.")
-   
+
 
     if stan_chat_button:
         
         
-        user_chat = "User: " + user_chat
+        user_chat = f"User: {user_chat}"
         st.session_state.persona_chat_history.append(user_chat)
         st.write(user_chat)
-        user_chat = user_chat + " Bot:"
+        user_chat = f"{user_chat} Bot:"
         output = per_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, do_sample=do_sample)
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
@@ -210,7 +210,7 @@ def persona():
         else:
             output = output[0]["generated_text"]
             output = output.split("Bot:")[1]
-            output = "Persona: " + output
+            output = f"Persona: {output}"
             st.write(output)
 
 
@@ -220,23 +220,23 @@ def gordon_chat():
     BAD_WORD = False
     st.title("Chat with Gordon")
     st.write("Please enter your message below. First generation may take up to a minute or more, as the model is loading. Latter generations should load faster.")
-    
+
     temperature = st.slider("Temperature", 0.1, 1.0, 0.3, 0.1)
     top_k = st.slider("Top K", 1, 100, 5, 1)
     max_length = st.slider("Max Length", 1, 250, 25, 1)
     do_sample = st.checkbox("Do Sample (If unchecked, will use greedy decoding, which is more coherent)")
 
     user_chat = st.text_input("Chat with Gordon!")
-    gordon_chat_button = st.button("Send")    
+    gordon_chat_button = st.button("Send")
     st.write("Please only press Send once, it will take a short amount of time to load during the first generation.")
 
     if gordon_chat_button:
         
         
-        user_chat = "User: " + user_chat
+        user_chat = f"User: {user_chat}"
         st.session_state.gordon_chat_history.append(user_chat)
         st.write(user_chat)
-        user_chat = user_chat + " Bot:"
+        user_chat = f"{user_chat} Bot:"
         output = gor_generate(user_chat, max_length=max_length, temperature=temperature, top_k=top_k, do_sample=do_sample)
         check_output = output[0]["generated_text"]
         check_output = check_output.split(" ")
@@ -251,9 +251,9 @@ def gordon_chat():
             st.write("The bot generated a slur, please try again.")
             BAD_WORD = False
         else:
-            output = output[0]["generated_text"]        
+            output = output[0]["generated_text"]
             output = output.split("Bot:")[1]
-            output = "Gordon: " + output
+            output = f"Gordon: {output}"
             st.write(output)
 
 
